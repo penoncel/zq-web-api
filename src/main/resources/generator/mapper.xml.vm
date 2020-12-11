@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package.Mapper}.${table.mapperName}">
+
+#if(${enableCache})
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+#end
+
+#if(${baseColumnList})
+    <!-- 查询条件体 -->
+    <sql id="search_body">
+        <if test="params.id!=null and params.id!=''">
+            and id = '${params.id}'
+        </if>
+
+    </sql>
+
+#end
+
+    <!-- 获取用户列表信息 -->
+    <select id="getPageList" resultType="map" parameterType="WebPage">
+        select * from ${table.name}
+        <where>
+            <include refid="search_body"/>
+        </where>
+        order by id desc
+    </select>
+
+</mapper>

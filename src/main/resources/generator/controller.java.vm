@@ -1,0 +1,125 @@
+package ${package.Controller};
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+
+import ${package.Service}.${table.serviceName};
+import ${package.Entity}.${entity};
+import com.mer.utils.LayuiResult;
+import com.mer.utils.WriteFrom;
+
+import java.util.*;
+
+/**
+* <p>
+ *     $!{table.comment} 控制器
+* </p>
+ * @author ${author}
+* @since ${date}
+*/
+@Controller
+@RequestMapping("/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${entity}#end" )
+public class ${table.controllerName} extends SysBaseController{
+    private static final Logger logger = LoggerFactory.getLogger(${entity}Controller.class);
+
+    @Autowired
+    private ${table.serviceName}  ${table.entityPath}Service;
+
+    /**
+     * $!{table.comment} 添加修改窗口
+     * @author ${author}
+     * @since ${date}
+     */
+    @RequestMapping("/add")
+    public String add(@RequestParam(value="id",required=false) Integer id) {
+        ${entity} ${table.entityPath} =null;
+        if (id!=null){
+            ${table.entityPath} = ${table.entityPath}Service.getOne(id);
+        }else{
+            ${table.entityPath} =  new ${entity}();
+        }
+        this.setAttribute("${table.entityPath}",${table.entityPath});
+        return this.toAction();
+    }
+
+    /**
+     * $!{table.comment} 添加修改数据
+     * @author ${author}
+     * @since ${date}
+     */
+    @PostMapping("/saveOrUpdate")
+    @ResponseBody
+    public JSONObject saveOrUpdate(@RequestBody ${entity} ${table.entityPath}){
+        try {
+            if (${table.entityPath}.getId() == null) {
+                    ${table.entityPath}Service.insertOne(${table.entityPath});
+            } else {
+                    ${table.entityPath}Service.updateOne(${table.entityPath});
+             }
+            return LayuiResult.Success_Result(null);
+        }catch (Exception e){
+            logger.error(WriteFrom.WriterEx(e));
+            return LayuiResult.Error_Result(null);
+        }
+    }
+
+    /**
+     * $!{table.comment} 删除数据
+     * @author ${author}
+     * @since ${date}
+     */
+    @PostMapping("/delete")
+    @ResponseBody
+    public JSONObject delete(@RequestParam("id") Integer id){
+        try {
+            ${table.entityPath}Service.deleteOne(id);
+            return LayuiResult.Success_Result(null);
+        }catch (Exception e){
+            logger.error(WriteFrom.WriterEx(e));
+            return LayuiResult.Error_Result(null);
+        }
+    }
+
+
+    /**
+     * $!{table.comment} 查询界面
+     * @author ${author}
+     * @since ${date}
+     */
+    @RequestMapping("/list")
+    public String list(){
+        return this.toAction();
+    }
+    /**
+     * $!{table.comment} 分页查询数据
+     * @author ${author}
+     * @since ${date}
+     */
+    @RequestMapping("/listData")
+    @ResponseBody
+    public Object listData(){
+        try{
+            result_table_data = ${table.entityPath}Service.getPage(this.getPage(null));
+            return  LayuiResult.tableResult(Integer.parseInt(result_table_data.get("count").toString()),result_table_data.get("data"));
+        }catch (Exception e){
+            logger.error(WriteFrom.WriterEx(e));
+            return  LayuiResult.tableResult(0,null);
+        }
+    }
+ 
+
+ }

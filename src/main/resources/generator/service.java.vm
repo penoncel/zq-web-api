@@ -1,0 +1,39 @@
+package ${package.Service};
+
+import ${package.Entity}.${entity};
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p>
+ * $!{table.comment} 服务类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+public interface ${table.serviceName} extends SysBaseService {
+
+    /**
+     * 查询单个 $!{table.comment}
+     **/
+    ${entity} getOne(int id);
+
+    /**
+     * 添加单个 $!{table.comment}
+     **/
+    int insertOne(${entity} ${table.entityPath});
+
+    /**
+     * 修改单个 $!{table.comment}
+     **/
+    int updateOne(${entity} ${table.entityPath});
+
+    /**
+     * 删除单个 $!{table.comment}
+     **/
+    int deleteOne(int id);
+
+}
+

@@ -1,0 +1,17 @@
+#服务端口
+server:
+  port: 7777
+
+  # 配置是否开启AOP参数加密解密，不配置默认为 true  false
+  isSecret: true
+
+#资源文件
+spring:
+  profiles:
+    active: develop
+#    active: production
+
+#knife4j:
+#  enable: true
+#  production: true
+

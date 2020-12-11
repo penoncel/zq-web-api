@@ -1,0 +1,45 @@
+package ${package.Mapper};
+
+import ${package.Entity}.${entity};
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * <p>
+ * $!{table.comment} Mapper 接口
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Mapper
+public interface ${table.mapperName} extends SysBaseDao{
+
+    /**
+    * 查询单个 $!{table.comment}
+    **/
+    @Select("select * from ${table.name} where id =#{id}")
+    ${entity} getOne(@Param("id") int id);
+
+    /**
+    * 添加单个 $!{table.comment}
+    **/
+    @Insert("insert into ${table.name}(#foreach($field in ${table.fields})${field.propertyName}#if($foreach.hasNext),#end #end)values(#foreach($field in ${table.fields})#{${field.propertyName}}#if($foreach.hasNext),#end #end)")
+    int insertOne(${entity} ${table.entityPath});
+
+    /**
+    * 修改单个 $!{table.comment}
+    **/
+    @Update("update ${table.name} set #foreach($field in ${table.fields})${field.propertyName}=#{${field.propertyName}}#if($foreach.hasNext),#end #end where id=#{id}")
+    int updateOne(${entity} ${table.entityPath});
+
+    /**
+    * 删除单个 $!{table.comment}
+    **/
+    @Delete("delete from ${table.name} where id=#{id}")
+    int deleteOne((@Param("id") int id);
+
+}
+

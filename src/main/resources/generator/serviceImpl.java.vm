@@ -1,0 +1,65 @@
+package ${package.ServiceImpl};
+
+import ${package.Mapper}.${table.mapperName};
+import ${package.Entity}.${entity};
+import ${package.Service}.${table.serviceName};
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+
+/**
+ * <p>
+ * $!{table.comment} 服务实现类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Service
+@Transactional
+@SuppressWarnings("/all")
+public class ${table.serviceImplName} implements ${table.serviceName} {
+
+    @Autowired
+    private ${table.mapperName} ${table.entityPath}Dao;
+
+    @Override
+    public int getOne(int id) {
+        return ${table.entityPath}Dao.getOne(id);
+    }
+
+    @Override
+    public int insertOne(${entity} ${table.entityPath}){
+        return ${table.entityPath}Dao.insertOne(${table.entityPath});
+    }
+
+    @Override
+    public int updateOne(${entity} ${table.entityPath}){
+        return ${table.entityPath}Dao.updateOne(${table.entityPath});
+    }
+
+    @Override
+    public int deleteOne(int id){
+        return ${table.entityPath}Dao.deleteOne(id);
+    }
+
+    @Override
+    public Map<String, Object> getPage(WebPage webPage) {
+        PageHelper.startPage(webPage.getPage(), webPage.getLimit());
+        List<Map<String,Object>> listDATA  = ${table.entityPath}Dao.getPageList(webPage);
+        PageInfo<Map<String, Object>> pageInfo = new PageInfo(listDATA);
+        HashMap<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("code", "0");
+        jsonMap.put("msg", "SUCCESS");
+        jsonMap.put("data", listDATA);//数据结果
+        jsonMap.put("count", pageInfo.getTotal());//获取数据总数
+        jsonMap.put("pageSize", pageInfo.getPageSize());//获取长度
+        jsonMap.put("pageNum", pageInfo.getPageNum());//获取当前页数
+        return jsonMap;
+    }
+
+
+}
+
