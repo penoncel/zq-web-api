@@ -1,11 +1,13 @@
 package com.mer.framework.shiro.token;
 
+import lombok.Data;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
 /**
  * @author zhaoqi
  * @date 2020/5/20 17:20
  */
+@Data
 public class CustomizedToken extends UsernamePasswordToken {
 
     /**
@@ -22,12 +24,4 @@ public class CustomizedToken extends UsernamePasswordToken {
         return loginType;
     }
 
-    public void setLoginType(String loginType) {
-        this.loginType = loginType;
-    }
-
-    @Override
-    public String toString(){
-        return "loginType="+ loginType +",username=" + super.getUsername()+",password="+ String.valueOf(super.getPassword());
-    }
 }

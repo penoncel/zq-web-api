@@ -1,5 +1,6 @@
 package com.mer.project.service.sms;
 
+import com.mer.framework.config.redis.keyset.KeyPrefix;
 import lombok.Data;
 
 /**
@@ -11,13 +12,15 @@ import lombok.Data;
 @Data
 public class SmsSandSendPo {
     /** 手机号 **/
-    private String mobile;
-
+    private String phone;
     /** 消息内容 **/
     private String message;
+    /** redis key **/
+    private KeyPrefix prefix;
 
-    public SmsSandSendPo(String mobile, String message) {
-        this.mobile = mobile;
+    public SmsSandSendPo(KeyPrefix prefix,String phone, String message) {
+        this.prefix = prefix;
+        this.phone = phone;
         this.message = message;
     }
 }

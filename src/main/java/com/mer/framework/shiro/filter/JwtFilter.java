@@ -1,97 +1,99 @@
 package com.mer.framework.shiro.filter;
 
-import com.alibaba.fastjson.JSONObject;
 import com.mer.common.constant.Constant;
-import com.mer.common.enums.ErrorStateEnum;
-import com.mer.common.utils.ServletUtils;
+import com.mer.common.enums.SysMsgEnum;
+import com.mer.common.redis.key.AppLoginKey;
+import com.mer.common.utils.ComUtils;
+import com.mer.common.utils.SpringContextUtils;
+import com.mer.framework.config.redis.redisservice.RedisService;
 import com.mer.framework.shiro.token.JwtToken;
+import com.mer.framework.web.domain.Result;
+import com.mer.project.vo.resp.LoginTokenVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * JWt 过滤器
+ *
  * @author zhaoqi
  * @date 2020/5/20 17:20
  */
 @Slf4j
-public class JwtFilter extends BasicHttpAuthenticationFilter{
+public class JwtFilter extends BasicHttpAuthenticationFilter {
 
     /**
      * 执行登录认证
-     * @param request ServletRequest
-     * @param response ServletResponse
-     * @param mappedValue mappedValue
+     *
+     * @param servletRequest  ServletRequest
+     * @param servletResponse ServletResponse
+     * @param mappedValue     mappedValue
      * @return 是否成功
      */
     @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        //判断请求头上是否携带 token
-        String token = ((HttpServletRequest) request).getHeader(Constant.TOKEN_HEADER_NAME);
-        if (token != null) {
-            //如果存在，则进入 executeLogin 方法执行登入，检查 token 是否正确
+    protected boolean isAccessAllowed(ServletRequest servletRequest, ServletResponse servletResponse, Object mappedValue) {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        if (Objects.nonNull(request.getHeader(Constant.TOKEN_HEADER_NAME))) {
             return executeLogin(request, response);
-        }else {
-            // 没有携带Token
-            HttpServletRequest httpRequest = (HttpServletRequest)request;
-            String httpMethod = httpRequest.getMethod();
-            String requestUri = httpRequest.getRequestURI();
-            log.info("当前请求 {} "+Constant.TOKEN_HEADER_NAME+"为空 请求类型 {}", requestUri, httpMethod);
-            JSONObject o = new JSONObject();
-            o.put("code", ErrorStateEnum.TOKEN_ISNULL.getCode());
-            o.put("msg", ErrorStateEnum.TOKEN_ISNULL.getMsg());
-            ServletUtils.renderString((HttpServletResponse) response, o.toString());
+        } else {
+            log.warn("Current request Header : {}  is null ,Uri：[{}]  , method type：[{}]", Constant.TOKEN_HEADER_NAME, request.getRequestURI(), request.getMethod());
+            ComUtils.outStr(response, Result.tJson(SysMsgEnum.NOT_AUTH));
             return false;
         }
-        // 如果请求头不存在 Token，则可能是执行登陆操作或者是游客状态访问，无需检查 token，直接返回 true
-//        return false;
     }
 
 
     /**
-     * 执行登录
+     * 执行 token 认证
+     *
+     * @param request
+     * @param response
+     * @return
      */
-    @Override
-    protected boolean executeLogin(ServletRequest request, ServletResponse response){
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        String token = httpServletRequest.getHeader(Constant.TOKEN_HEADER_NAME);
-        JwtToken jwtToken = new JwtToken(token);
-        // 提交给realm进行登入，如果错误他会抛出异常并被捕获
+    protected boolean executeLogin(HttpServletRequest request, HttpServletResponse response) {
         try {
+            JwtToken jwtToken = new JwtToken(request.getHeader(Constant.TOKEN_HEADER_NAME));
+            // 提交给 jwtrealm 进行token认证 , 如果错误他会抛出异常并被捕获
             getSubject(request, response).login(jwtToken);
 
-        }catch (AuthenticationException e){
-            ServletUtils.renderString(httpServletResponse, e.getMessage());
+            /**
+             * 单点登入（到这里代表token认证无误）
+             */
+            Subject subject = getSubject(request, response);
+            // 当前用户
+            String username = subject.getPrincipal().toString();
+            //注册 bean
+            RedisService redisService = SpringContextUtils.getBean(RedisService.class);
+            //获取 RD 模版
+            LoginTokenVo redisToken = redisService.get(AppLoginKey.userToken, username, LoginTokenVo.class);
+            /**
+             * 1、每次登入的时候，都会注销上一次登入 未过期的用户，且重新生成缓存
+             * 2、即视为，存在缓存，Token 一致，说明当前用户登入，如果存在，且tonken不一致，说明另外一个是被登入。
+             * 3、这里不会出现 redis过期了还过来验证。shiro中过滤器 顺序执行。
+             */
+            if (Objects.nonNull(redisToken)) {
+                if (!jwtToken.getPrincipal().equals(redisToken.getToken())) {
+                    // Todo 这里提示 可以带上 是几点 在哪个设备上登入了（信息来源于token）
+                    ComUtils.outStr(response, Result.tJson(SysMsgEnum.THE_ONLY_ACCESS));
+                    return false;
+                }
+            }
+        } catch (AuthenticationException e) {
+            ComUtils.outStr(response, e.getMessage());
+            return false;
+        } catch (Exception e) {
+            ComUtils.outStr(response, Result.tJson(SysMsgEnum.INTERNAL_SERVER_ERROR));
             return false;
         }
-        // 如果没有抛出异常则代表登入成功，返回true
         return true;
-    }
-
-    /**
-     * 对跨域提供支持
-     */
-    @Override
-    protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
-        httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
-        // 跨域时会首先发送一个option请求，这里我们给option请求直接返回正常状态
-        if (httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
-            httpServletResponse.setStatus(HttpStatus.OK.value());
-            return false;
-        }
-        return super.preHandle(request, response);
     }
 
 

@@ -1,4 +1,4 @@
-package com.mer.framework.config;
+package com.mer.framework.config.mvc;
 
 import com.mer.framework.web.interceptor.AppConnectBushIntercept;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +25,11 @@ public class MvcConfig implements WebMvcConfigurer {
     /**
      * 不拦截的
      */
-    private final String[] excludePathPatterns = new String[]{"/","/webjars/**","/swagger-resources/**","/v2/**","/doc.html"};
+    private final String[] excludePathPatterns = new String[]{"/", "/webjars/**", "/swagger-resources/**", "/v2/**", "/doc.html"};
 
     /**
      * 设置跨域访问
+     *
      * @param registry
      */
     @Override
@@ -56,19 +57,6 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(appConnectBushIntercept).addPathPatterns("/**").excludePathPatterns(excludePathPatterns);
         log.info("Init AppConnectBushIntercept Success。。。。");
     }
-
-
-//    /**
-//     * 添加jwt拦截器
-//     */
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(jwtInterceptor())
-//                // 拦截所有请求，通过判断 @JwtToken注解 决定是否需要登录
-//                .addPathPatterns("/**");
-//    }
-
-
 
 
 }

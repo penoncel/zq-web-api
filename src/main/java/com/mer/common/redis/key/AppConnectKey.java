@@ -1,4 +1,4 @@
-package com.mer.common.rediskey;
+package com.mer.common.redis.key;
 
 import com.mer.common.constant.Constant;
 import com.mer.framework.config.redis.keyset.BasePrefix;

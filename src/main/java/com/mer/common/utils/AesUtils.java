@@ -1,4 +1,4 @@
-package com.mer.framework.utils;
+package com.mer.common.utils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -12,19 +12,19 @@ import javax.crypto.spec.SecretKeySpec;
 public class AesUtils {
     private static final String KEY_AES = "AES";
     private static final String KEY = "1101101101101111";
-    
+
     public static String encrypt(String src) {
-      try{
-          byte[] raw = KEY.getBytes();
-          SecretKeySpec skeySpec = new SecretKeySpec(raw, KEY_AES);
-          Cipher cipher = Cipher.getInstance(KEY_AES);
-          cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-          byte[] encrypted = cipher.doFinal(src.getBytes());
-          return byte2hex(encrypted);
-      }catch (Exception e){
-          e.printStackTrace();
-      }
-          return null;
+        try {
+            byte[] raw = KEY.getBytes();
+            SecretKeySpec skeySpec = new SecretKeySpec(raw, KEY_AES);
+            Cipher cipher = Cipher.getInstance(KEY_AES);
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+            byte[] encrypted = cipher.doFinal(src.getBytes());
+            return byte2hex(encrypted);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static String decrypt(String src) throws Exception {
@@ -44,7 +44,7 @@ public class AesUtils {
             return null;
         }
         int l = strhex.length();
-        int bs=2;
+        int bs = 2;
         if (l % bs == 1) {
             return null;
         }

@@ -7,7 +7,8 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.mer.common.constant.Constant;
-import com.mer.framework.web.domain.LoginToken;
+import com.mer.project.vo.resp.LoginTokenVo;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @Author: 赵旗
  * @Create: 2020-12-09 12:08
  */
+@Slf4j
 public class JwtUtil {
 
     /**
@@ -73,8 +75,8 @@ public class JwtUtil {
      * @param phone 用户名/手机号
      * @return 加密的token
      */
-    public static LoginToken createToken(String phone) {
-        LoginToken loginToken = new LoginToken();
+    public static LoginTokenVo createToken(String phone) {
+        LoginTokenVo loginTokenVo = new LoginTokenVo();
         try{
             Date date = new Date(System.currentTimeMillis() + Constant.TOKEN_EXPIRE_TIME);
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
@@ -92,10 +94,10 @@ public class JwtUtil {
                     .withExpiresAt(date)
                     //加密
                     .sign(algorithm);
-            loginToken.setToken(token);
-            loginToken.setTokenPeriodTime(usTimeToString(date.toString()));
-            createRefreshToken(map,loginToken,phone);
-            return loginToken;
+            loginTokenVo.setToken(token);
+            loginTokenVo.setTokenPeriodTime(usTimeToString(date.toString()));
+            createRefreshToken(map, loginTokenVo,phone);
+            return loginTokenVo;
         }catch (Exception e){
             return null;
         }
@@ -105,11 +107,11 @@ public class JwtUtil {
     /**
      * 创建 刷新 token
      * @param map         header
-     * @param loginToken  反回的实体类
+     * @param loginTokenVo  反回的实体类
      * @param phone       用户手机号
      * @return 用户登入模版
      */
-    public static LoginToken createRefreshToken(Map<String,Object> map,LoginToken loginToken,String phone) {
+    public static LoginTokenVo createRefreshToken(Map<String,Object> map, LoginTokenVo loginTokenVo, String phone) {
         try{
             Date date = new Date(System.currentTimeMillis() + Constant.REFRESHTOKEN_EXPIRE_TIME);
             Algorithm algorithm = Algorithm.HMAC256(SECRET);
@@ -124,8 +126,8 @@ public class JwtUtil {
                     .withExpiresAt(date)
                     //加密
                     .sign(algorithm);
-            loginToken.setRefreshToken(token);
-            return loginToken;
+            loginTokenVo.setRefreshToken(token);
+            return loginTokenVo;
         }catch (Exception e){
             return null;
         }
@@ -147,10 +149,10 @@ public class JwtUtil {
                     .build();
             // 效验TOKEN
             verifier.verify(token);
-            return true;
-        } catch (JWTVerificationException exception) {
-            throw exception;
+        } catch (JWTVerificationException e) {
+            throw e;
         }
+        return true;
     }
 
     /**
@@ -164,20 +166,35 @@ public class JwtUtil {
     }
 
     public static void main(String[] args) throws ParseException {
-        Date date = new Date(System.currentTimeMillis() + Constant.TOKEN_EXPIRE_TIME);
-        System.out.println(date.toString());
-        Date tokenOutDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(date.toString());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        //token 过期时间
-        String tokenTimeOutTimes = dateFormat.format(tokenOutDate);
-        System.out.println(tokenTimeOutTimes);
-        tokenTimeIsNotRefsh("2020-05-31 17:25:25");
+//        Date date = new Date(System.currentTimeMillis() + Constant.TOKEN_EXPIRE_TIME);
+//        System.out.println(date.toString());
+//        Date tokenOutDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(date.toString());
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        //token 过期时间
+//        String tokenTimeOutTimes = dateFormat.format(tokenOutDate);
+//        System.out.println(tokenTimeOutTimes);
+//        tokenTimeIsNotRefsh("2020-05-31 17:25:25");
+//
+//        LoginToken loginToken =createToken("15701556037");
+//        System.out.println(loginToken.toString());
+//        System.out.println(getPhone(loginToken.getToken()));
 
-        LoginToken loginToken =createToken("15701556037");
-        System.out.println(loginToken.toString());
-        System.out.println(getPhone(loginToken.getToken()));
-
+        long a = getIssuedAt("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE1NzAxNTU2MDM3IiwiZXhwIjoxNjA4MTk3MTEyLCJpYXQiOjE2MDgwMjQzMTJ9.5mmb2WSNzJprG9nHVLNGkZg7aLxqDHndsL6BzDbQJng");
+        long b = getIssuedAt("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE1NzAxNTU2MDM3IiwiZXhwIjoxNjA4MjU4Mzc3LCJpYXQiOjE2MDgwODU1Nzd9.iLGqnUu-IKMuqvLe5pkfguIMixC17McFNduR5KlaPJE");
+        log.info("时间A：{},时间B：{}",a,b);
     }
+
+    /**
+     * 获取 token 签发时间
+     * @param token token
+     * @return
+     */
+    public static long getIssuedAt(String token){
+//        System.out.println(new SimpleDateFormat("yyyyMMddHHmmss").format(JWT.decode(token).getIssuedAt())+"---"+JWT.decode(token).getIssuedAt().getTime());
+        return JWT.decode(token).getIssuedAt().getTime();
+    }
+
+
 
     /**
      * 是否需要刷新token

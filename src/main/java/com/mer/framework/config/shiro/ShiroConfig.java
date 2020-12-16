@@ -1,4 +1,4 @@
-package com.mer.framework.config;
+package com.mer.framework.config.shiro;
 
 import com.mer.common.filter.MyFilter;
 import com.mer.framework.shiro.filter.JwtFilter;
@@ -6,6 +6,7 @@ import com.mer.framework.shiro.realms.CodeRealm;
 import com.mer.framework.shiro.realms.JwtRealm;
 import com.mer.framework.shiro.realms.PassWordRealm;
 import com.mer.framework.shiro.realms.UserModularRealmAuthenticator;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
@@ -34,14 +35,16 @@ import java.util.Map;
  * @Create: 2020-12-09 12:08
  */
 @Configuration
+@Slf4j
 public class ShiroConfig {
 
     /**
      * 开启shiro权限注解
+     *
      * @return DefaultAdvisorAutoProxyCreator
      */
     @Bean
-    public static DefaultAdvisorAutoProxyCreator creator(){
+    public static DefaultAdvisorAutoProxyCreator creator() {
         DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
         creator.setProxyTargetClass(true);
         return creator;
@@ -63,10 +66,11 @@ public class ShiroConfig {
 
     /**
      * 密码登录时使用该匹配器进行匹配
+     *
      * @return HashedCredentialsMatcher
      */
     @Bean("hashedCredentialsMatcher")
-    public HashedCredentialsMatcher hashedCredentialsMatcher(){
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
         HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
         // 设置哈希算法名称   SHA-256
         matcher.setHashAlgorithmName("md5");
@@ -76,67 +80,62 @@ public class ShiroConfig {
         return matcher;
     }
 
-
-
-
-
-
-
-
-
     /**
      * Shiro内置过滤器，可以实现拦截器相关的拦截器
-     *    常用的过滤器：
-     *      anon：无需认证（登录）可以访问
-     *      authc：必须认证才可以访问
-     *      user：如果使用rememberMe的功能可以直接访问
-     *      perms：该资源必须得到资源权限才可以访问
-     *      role：该资源必须得到角色权限才可以访问
+     * 常用的过滤器：
+     * anon：无需认证（登录）可以访问
+     * authc：必须认证才可以访问
+     * user：如果使用rememberMe的功能可以直接访问
+     * perms：该资源必须得到资源权限才可以访问
+     * role：该资源必须得到角色权限才可以访问
      **/
     @Bean
-    public ShiroFilterFactoryBean shiroFilter(@Qualifier("securityManager") SecurityManager securityManager){
+    public ShiroFilterFactoryBean shiroFilter(@Qualifier("securityManager") SecurityManager securityManager) {
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
-        // 添加自己的过滤器并且取名为jwt
-        Map<String, Filter> filter = new LinkedHashMap<>(2);
-        //设置我们自定义的JWT过滤器
-        filter.put("jwt", new JwtFilter());
+
+        //设置过滤器
+        LinkedHashMap<String, Filter> filter = new LinkedHashMap<String, Filter>();
         //设置我们自定义的 参数 sql 过滤器 过滤 非法参数 SQL注入 和 攻击
         filter.put("repeat", new MyFilter());
+        //设置我们自定义的JWT过滤器
+        filter.put("jwt", new JwtFilter());
+
         bean.setFilters(filter);
         // 设置 SecurityManager
         bean.setSecurityManager(securityManager);
 
-
         //拦截器
         Map<String, String> filterMap = new LinkedHashMap<>();
         // 放行 login
-        filterMap.put("/app/login/**",   "anon");
+        filterMap.put("/app/login/**", "anon");
+        filterMap.put("/app/code/**", "anon");
         //放行 静态资源
-        filterMap.put("/images/**",  "anon");
+        filterMap.put("/images/**", "anon");
         filterMap.put("/doc.html", "anon");
         filterMap.put("/app/apitest/**", "anon");
 
         //swagger配置放行
-//        filterMap.put("/swagger-ui.html","anon");
-        filterMap.put("/swagger/**","anon");
-        filterMap.put("/webjars/**","anon");
-        filterMap.put("/swagger-resources/**","anon");
-        filterMap.put("/v2/**","anon");
+        filterMap.put("/swagger/**", "anon");
+        filterMap.put("/webjars/**", "anon");
+        filterMap.put("/swagger-resources/**", "anon");
+        filterMap.put("/v2/**", "anon");
 
         // 所有请求必须要先通过参数过滤
+        filterMap.put("/*", "repeat,jwt");
         filterMap.put("/**", "repeat,jwt");
+        filterMap.put("/***", "repeat,jwt");
         bean.setFilterChainDefinitionMap(filterMap);
         return bean;
     }
 
 
-
     /**
-     *  密码登入 - 认证器
-     *  @return
-     * **/
+     * 密码登入 - 认证器
+     *
+     * @return
+     **/
     @Bean
-    public PassWordRealm passWordRealm(@Qualifier("hashedCredentialsMatcher") HashedCredentialsMatcher matcher){
+    public PassWordRealm passWordRealm(@Qualifier("hashedCredentialsMatcher") HashedCredentialsMatcher matcher) {
         PassWordRealm userRealm = new PassWordRealm();
         //加密器
         userRealm.setCredentialsMatcher(matcher);
@@ -145,11 +144,12 @@ public class ShiroConfig {
 
     /**
      * 验证码登录Realm
+     *
      * @param matcher 密码匹配器
      * @return CodeRealm
      */
     @Bean
-    public CodeRealm codeRealm(@Qualifier("hashedCredentialsMatcher") HashedCredentialsMatcher matcher){
+    public CodeRealm codeRealm(@Qualifier("hashedCredentialsMatcher") HashedCredentialsMatcher matcher) {
         CodeRealm codeRealm = new CodeRealm();
         codeRealm.setCredentialsMatcher(matcher);
         return codeRealm;
@@ -157,16 +157,17 @@ public class ShiroConfig {
 
     /**
      * jwtRealm
+     *
      * @return JwtRealm
      */
     @Bean
-    public JwtRealm jwtRealm(){
+    public JwtRealm jwtRealm() {
         return new JwtRealm();
     }
 
 
     @Bean
-    public UserModularRealmAuthenticator userModularRealmAuthenticator(){
+    public UserModularRealmAuthenticator userModularRealmAuthenticator() {
         // 自己重写的ModularRealmAuthenticator
         UserModularRealmAuthenticator modularRealmAuthenticator = new UserModularRealmAuthenticator();
         modularRealmAuthenticator.setAuthenticationStrategy(new AtLeastOneSuccessfulStrategy());
@@ -175,7 +176,7 @@ public class ShiroConfig {
 
 
     /**
-     *  SecurityManager 是 Shiro 架构的核心，通过它来链接Realm和用户(文档中称之为Subject.)
+     * SecurityManager 是 Shiro 架构的核心，通过它来链接Realm和用户(文档中称之为Subject.)
      */
     @Bean
     public SecurityManager securityManager(@Qualifier("passWordRealm") PassWordRealm passwordReal,

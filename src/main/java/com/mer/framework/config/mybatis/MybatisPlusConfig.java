@@ -1,4 +1,4 @@
-package com.mer.framework.config;
+package com.mer.framework.config.mybatis;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.mybatis.spring.annotation.MapperScan;
@@ -18,7 +18,7 @@ public class MybatisPlusConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource(){
+    public DataSource dataSource() {
         return new DruidDataSource();
     }
 }

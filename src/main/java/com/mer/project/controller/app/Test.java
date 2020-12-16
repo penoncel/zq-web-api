@@ -1,11 +1,13 @@
 package com.mer.project.controller.app;
 
+import com.mer.framework.annotction.PhoneNumber;
 import com.mer.framework.web.controller.BaseController;
 import com.mer.framework.web.domain.Result;
 import com.mer.project.pojo.SysUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -33,29 +35,18 @@ public class Test extends BaseController {
         return "get";
     }
 
-
-    @ApiOperation("退出")
-    @ApiImplicitParam(name = "phone", value = "手机号", required = true, paramType = "query", dataType = "string")
-    @GetMapping("/logout")
-    @RequiresRoles(logical = Logical.OR,value = {"admin","user"})
-    @RequiresPermissions(logical = Logical.OR, value = {"user", "admin","WebUser/edit"})
-    public Result logout(@NotEmpty(message = "phone 不能为空") String phone) {
-        // 退出操作
-        return Result.success(phone);
-    }
-
-    @ApiOperation("退出")
-    @ApiImplicitParam(name = "phone", value = "手机号", required = true, paramType = "query", dataType = "string")
-    @GetMapping("/deleted/{userId}")
-    @RequiresPermissions(logical = Logical.OR, value = {"user", "admin","WebUser/edit"})
-    public Result deleted(@PathVariable @NotNull(message = "userId不能为空") Integer userId){
-        return Result.success(userId);
-    }
-
-    @ApiOperation(value = "获取所有用户[permissions: system:user:list]", response = SysUser.class)
-    @GetMapping("/ddd/{userId}")
-    @RequiresPermissions(logical = Logical.OR, value = {"user", "admin","WebUser/edit"})
+    @ApiOperation(value = "获取所有用户[permissions: a:b:c]", response = SysUser.class)
+    @GetMapping("/ddds/{userId}")
+    @RequiresPermissions(logical = Logical.OR, value = {"1","user","WebRole/power"})
     public Result dddd(@PathVariable @NotNull(message = "userId不能为空") Integer userId){
         return Result.success(userId);
+    }
+
+
+    @ApiOperation(value = "获取所有用户[permissions: a:b:c]", response = SysUser.class)
+    @GetMapping("/ddd")
+    @RequiresPermissions(logical = Logical.OR, value = {"1","user","WebRole/power"})
+    public Result dddd(@ApiParam(value = "手机号", required = true)  @PhoneNumber String phone){
+        return Result.success(phone);
     }
 }

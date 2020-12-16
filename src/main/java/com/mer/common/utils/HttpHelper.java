@@ -1,8 +1,7 @@
 package com.mer.common.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
 import java.io.BufferedReader;
@@ -18,8 +17,8 @@ import java.nio.charset.Charset;
  * @Author: 赵旗
  * @Create: 2020-12-09 12:08
  */
+@Slf4j
 public class HttpHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpHelper.class);
 
     public static String getBodyString(ServletRequest request) {
         StringBuilder sb = new StringBuilder();
@@ -28,17 +27,17 @@ public class HttpHelper {
             reader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println("getBodyString{}"+line);
+                System.out.println("getBodyString{}" + line);
                 sb.append(line);
             }
         } catch (IOException e) {
-            LOGGER.warn("getBodyString出现问题！");
+            log.warn("getBodyString出现问题！");
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    LOGGER.error(ExceptionUtils.getStackTrace(e));
+                    log.error(ExceptionUtils.getStackTrace(e));
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.mer.common.rediskey;
+package com.mer.common.redis.key;
 
 import com.mer.common.constant.Constant;
 import com.mer.framework.config.redis.keyset.BasePrefix;
@@ -14,25 +14,26 @@ public class AppLoginKey extends BasePrefix {
     private AppLoginKey(int expireSeconds, String prefix) {
         super(expireSeconds, prefix);
     }
+
     /**
      * 用户信息 token
      */
-    public static AppLoginKey userToken = new AppLoginKey(Constant.REDIS_TOKEN_TIMEOUT,Constant.TOKEN_HEADER_NAME+":");
+    public static AppLoginKey userToken = new AppLoginKey(Constant.REDIS_TOKEN_TIMEOUT, Constant.TOKEN_HEADER_NAME + ":");
 
     /**
      * 登入用户 信息
      */
-    public static AppLoginKey loginUserIinfo = new AppLoginKey(Constant.LOGINUSERMSG_TIMEOUT,"userInfo:");
+    public static AppLoginKey loginUserIinfo = new AppLoginKey(Constant.LOGINUSERMSG_TIMEOUT, "userInfo:");
 
     /**
      * 登入 验证码 key
      */
-    public static AppLoginKey smsCode = new AppLoginKey(Constant.SMSCODE_TIMEOUT,"smsCode:");
+    public static AppLoginKey smsCode = new AppLoginKey(Constant.SMSCODE_TIMEOUT, "smsCode:");
 
 
     /**
      * 通过验证码 修改密码
      */
-    public static AppLoginKey modifyPassWordCode = new AppLoginKey(Constant.SMSCODE_TIMEOUT,"modifyPassWordCode:");
+    public static AppLoginKey modifyPassWordCode = new AppLoginKey(Constant.SMSCODE_TIMEOUT, "modifyPassWordCode:");
 
 }

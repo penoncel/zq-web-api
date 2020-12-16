@@ -20,7 +20,7 @@ import com.alibaba.fastjson.TypeReference;
 import ${package.Service}.${table.serviceName};
 import ${package.Entity}.${entity};
 import com.mer.utils.LayuiResult;
-import com.mer.utils.WriteFrom;
+import com.mer.utils.CommonUtils;
 
 import java.util.*;
 
@@ -72,7 +72,7 @@ public class ${table.controllerName} extends SysBaseController{
              }
             return LayuiResult.Success_Result(null);
         }catch (Exception e){
-            logger.error(WriteFrom.WriterEx(e));
+            logger.error(CommonUtils.WriterEx(e));
             return LayuiResult.Error_Result(null);
         }
     }
@@ -89,7 +89,7 @@ public class ${table.controllerName} extends SysBaseController{
             ${table.entityPath}Service.deleteOne(id);
             return LayuiResult.Success_Result(null);
         }catch (Exception e){
-            logger.error(WriteFrom.WriterEx(e));
+            logger.error(CommonUtils.WriterEx(e));
             return LayuiResult.Error_Result(null);
         }
     }
@@ -116,7 +116,7 @@ public class ${table.controllerName} extends SysBaseController{
             result_table_data = ${table.entityPath}Service.getPage(this.getPage(null));
             return  LayuiResult.tableResult(Integer.parseInt(result_table_data.get("count").toString()),result_table_data.get("data"));
         }catch (Exception e){
-            logger.error(WriteFrom.WriterEx(e));
+            logger.error(CommonUtils.WriterEx(e));
             return  LayuiResult.tableResult(0,null);
         }
     }

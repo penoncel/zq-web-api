@@ -1,4 +1,4 @@
-package com.mer.framework.web.domain;
+package com.mer.project.vo.resp;
 
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import lombok.Data;
  * @Create: 2020-12-09 12:08
  */
 @Data
-public class LoginToken {
+public class LoginTokenVo {
 
     /**
      * token 用户正常访问接口时提交的token，过期时间设置长一些，15 day 吧

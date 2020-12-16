@@ -1,4 +1,4 @@
-package com.mer.framework.web.domain;
+package com.mer.common.redis.val;
 
 import com.mer.project.pojo.SysUser;
 import lombok.Data;

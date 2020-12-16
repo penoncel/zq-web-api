@@ -16,4 +16,12 @@ public class ZqWebApiApplication {
 		SpringApplication.run(ZqWebApiApplication.class, args);
 	}
 
+	/**
+	 * 需要整改
+	 * 1、aop 全局日志
+	 * 2、sql连接器
+	 * 3、日志
+	 * 4、加解密
+	 *
+	 */
 }

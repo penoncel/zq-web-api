@@ -7,7 +7,6 @@ package com.mer.common.constant;
  * @Create: 2020-12-09 12:08
  */
 public class Constant {
-
     /**
      * 验证码过期时间 此处为五分钟
      */

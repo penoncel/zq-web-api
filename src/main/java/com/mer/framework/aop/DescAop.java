@@ -3,7 +3,7 @@ package com.mer.framework.aop;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mer.framework.annotction.DES;
-import com.mer.framework.utils.AesUtils;
+import com.mer.common.utils.AesUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

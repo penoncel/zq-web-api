@@ -1,8 +1,7 @@
 package com.mer.common.enums;
 
 /**
- * @Program: zq-web-api
- * @Description: 接口登入类型 枚举类
+ * @Description: 登入方式 枚举类
  * @Author: 赵旗
  * @Create: 2020-12-09 12:08
  */
@@ -18,7 +17,7 @@ public enum LoginTypeEnum {
 
     private String type;
 
-    LoginTypeEnum(String type){
+    LoginTypeEnum(String type) {
         this.type = type;
     }
 

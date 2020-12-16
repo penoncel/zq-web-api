@@ -1,7 +1,6 @@
 package com.mer.common.enums;
 
 /**
- * @Program: zq-web-api
  * @Description: 角色类型
  * @Author: 赵旗
  * @Create: 2020-12-09 12:08

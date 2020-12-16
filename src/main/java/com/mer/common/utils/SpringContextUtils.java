@@ -1,4 +1,4 @@
-package com.mer.framework.utils;
+package com.mer.common.utils;
 
 
 import org.springframework.beans.BeansException;
@@ -25,6 +25,7 @@ public class SpringContextUtils implements ApplicationContextAware {
 
     /**
      * 通过name获取 Bean
+     *
      * @param name
      * @return
      */
@@ -32,8 +33,21 @@ public class SpringContextUtils implements ApplicationContextAware {
         return applicationContext.getBean(name);
     }
 
+
+    /**
+     * 通过Clazz返回指定的Bean
+     *
+     * @param requiredType
+     * @param <T>
+     * @return
+     */
+    public static <T> T getBean(Class<T> requiredType) {
+        return applicationContext.getBean(requiredType);
+    }
+
     /**
      * 通过name,以及Clazz返回指定的Bean
+     *
      * @param name
      * @param requiredType
      * @param <T>

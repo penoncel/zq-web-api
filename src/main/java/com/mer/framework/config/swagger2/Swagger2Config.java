@@ -1,9 +1,10 @@
-package com.mer.framework.config;
+package com.mer.framework.config.swagger2;
 
 import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver;
 import com.mer.common.constant.Constant;
-import com.mer.common.enums.ErrorStateEnum;
+import com.mer.common.enums.SysMsgEnum;
 import com.mer.framework.web.domain.Result;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,6 +33,7 @@ import java.util.List;
 @EnableSwagger2WebMvc
 public class Swagger2Config {
     private final OpenApiExtensionResolver openApiExtensionResolver;
+
 
     public Swagger2Config(OpenApiExtensionResolver openApiExtensionResolver) {
         this.openApiExtensionResolver = openApiExtensionResolver;
@@ -107,12 +109,25 @@ public class Swagger2Config {
      */
     private List<ResponseMessage> responseMessages() {
         List<ResponseMessage> responseMessages = new ArrayList<ResponseMessage>() {{
-            ErrorStateEnum success = ErrorStateEnum.SUCCESS;
-            ErrorStateEnum invalid = ErrorStateEnum.TOKEN_ISNULL;
-            ErrorStateEnum requestlimit = ErrorStateEnum.REQUEST_LIMIT;
+            SysMsgEnum success = SysMsgEnum.SUCCESS;
+            SysMsgEnum error = SysMsgEnum.ERROR;
+            SysMsgEnum notAuth = SysMsgEnum.NOT_AUTH;
+            SysMsgEnum tooManyRequest = SysMsgEnum.TOO_MANY_REQUEST;
+
+            SysMsgEnum tokenError = SysMsgEnum.TOKEN_ERROR;
+            SysMsgEnum tokenInvalid = SysMsgEnum.TOKEN_INVALID;
+            SysMsgEnum missingParameter = SysMsgEnum.MISSING_PARAMETER;
+            SysMsgEnum internalServerError = SysMsgEnum.INTERNAL_SERVER_ERROR;
+
             add(new ResponseMessageBuilder().code(success.getCode()).message(success.getMsg()).build());
-            add(new ResponseMessageBuilder().code(invalid.getCode()).message(invalid.getMsg()).build());
-            add(new ResponseMessageBuilder().code(requestlimit.getCode()).message(requestlimit.getMsg()).build());
+            add(new ResponseMessageBuilder().code(error.getCode()).message(error.getMsg()).build());
+            add(new ResponseMessageBuilder().code(notAuth.getCode()).message(notAuth.getMsg()).build());
+            add(new ResponseMessageBuilder().code(tooManyRequest.getCode()).message(tooManyRequest.getMsg()).build());
+
+            add(new ResponseMessageBuilder().code(tokenError.getCode()).message(tokenError.getMsg()).build());
+            add(new ResponseMessageBuilder().code(tokenInvalid.getCode()).message(tokenInvalid.getMsg()).build());
+            add(new ResponseMessageBuilder().code(missingParameter.getCode()).message(missingParameter.getMsg()).build());
+            add(new ResponseMessageBuilder().code(internalServerError.getCode()).message(internalServerError.getMsg()).build());
         }};
         return responseMessages;
     }
