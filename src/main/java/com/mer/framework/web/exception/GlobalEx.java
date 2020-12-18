@@ -1,7 +1,6 @@
 package com.mer.framework.web.exception;
 
 
-import com.aliyuncs.exceptions.ClientException;
 import com.mer.common.enums.SysMsgEnum;
 import com.mer.framework.web.domain.Result;
 import lombok.extern.slf4j.Slf4j;
