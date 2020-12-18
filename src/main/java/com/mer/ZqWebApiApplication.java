@@ -18,9 +18,9 @@ public class ZqWebApiApplication {
 
 	/**
 	 * 需要整改
-	 * 1、aop 全局日志
-	 * 2、sql连接器
-	 * 3、日志
+	 * 1、aop 日志更新 ok
+	 * 2、sql拦截器    ok
+	 * 3、日志        ok
 	 * 4、加解密
 	 *
 	 */

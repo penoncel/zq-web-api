@@ -62,7 +62,6 @@ public class SysUserServiceImpl implements SysUserService {
         try {
             // 封装用户数据
             CustomizedToken token = new CustomizedToken(phone, password, LoginTypeEnum.PASSWORD_LOGIN_TYPE.toString());
-            log.info(token.toString());
             // 执行登录方法
             SecurityUtils.getSubject().login(token);
             // 返回登录后初始化参数
@@ -86,7 +85,6 @@ public class SysUserServiceImpl implements SysUserService {
         try {
             // 封装用户数据
             CustomizedToken token = new CustomizedToken(phone, code, LoginTypeEnum.CODE_LOGIN_TYPE.toString());
-            log.info(token.toString());
             // 执行登录方法
             SecurityUtils.getSubject().login(token);
             // 返回登录后初始化参数

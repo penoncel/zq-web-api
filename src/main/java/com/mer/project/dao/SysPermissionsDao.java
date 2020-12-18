@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.Set;
+
 /**
  * @Program: zq-web-api
  * @Description: 权限Dao接口
@@ -15,25 +16,31 @@ import java.util.Set;
 public interface SysPermissionsDao {
 
     /**
-     * 根据角色id获取其权限
-     * @param roleId 角色id
+     * 根据用户 id获取其角色权限
+     *
+     * @param userId 角色id
      * @return Set<String>
      */
-    @Select("select mu.href from sys_menu mu INNER join (  " +
-            " select menu_id from sys_user_roles ur INNER join sys_role_permission rp on ur.role_id = rp.role_id and ur.role_id = #{roleId} " +
-            " )t on mu.id = t.menu_id")
-    Set<String> getPermissionsSet(@Param("roleId") Integer roleId);
-
-    /**
-     * 根据用户id 获取其角色 id 列表
-     * @param userId userId
-     * @return Set<Integer>
-     */
-    @Select("select role_id from sys_user_roles where user_id = #{userId}")
-    Set<Integer> getRoleIdSet(@Param("userId")Integer userId);
+    @Select(" SELECT " +
+            "   sm.href " +
+            " FROM sys_role sr " +
+            " LEFT JOIN sys_role_permission srp ON sr.id = srp.role_id " +
+            " LEFT JOIN `sys_menu`sm ON srp.menu_id = sm.id " +
+            " WHERE  " +
+            " srp.role_id IN " +
+            " ( " +
+            "     SELECT " +
+            "       sur.role_id " +
+            "     FROM sys_user sy " +
+            "     LEFT JOIN sys_user_roles sur ON sy.id=sur.user_id " +
+            "     WHERE sy.id = #{userId} " +
+            " )" +
+            " GROUP BY sm.href  ")
+    Set<String> getPermissionsSet(@Param("userId") Integer userId);
 
     /**
      * 根据用户id 获取其角色 key 列表
+     *
      * @param userId userId
      * @return Set<Role>
      */
@@ -42,6 +49,7 @@ public interface SysPermissionsDao {
 
     /**
      * 添加用户角色权限
+     *
      * @param userId
      * @param roleIds
      * @return

@@ -1,5 +1,6 @@
 package com.mer.project.controller.app;
 
+import com.mer.framework.annotction.LOG;
 import com.mer.framework.annotction.PhoneNumber;
 import com.mer.framework.web.controller.BaseController;
 import com.mer.framework.web.domain.Result;
@@ -31,7 +32,7 @@ public class Test extends BaseController {
     @ApiOperation("测试")
     @RequestMapping("/get")
     public Object get(){
-
+        Integer.parseInt("123aeq");
         return "get";
     }
 
@@ -42,10 +43,8 @@ public class Test extends BaseController {
         return Result.success(userId);
     }
 
-
-    @ApiOperation(value = "获取所有用户[permissions: a:b:c]", response = SysUser.class)
+    @LOG(operModul = "用户登入", operType = "密码登录", operDesc = "手机号密码登入")
     @GetMapping("/ddd")
-    @RequiresPermissions(logical = Logical.OR, value = {"1","user","WebRole/power"})
     public Result dddd(@ApiParam(value = "手机号", required = true)  @PhoneNumber String phone){
         return Result.success(phone);
     }

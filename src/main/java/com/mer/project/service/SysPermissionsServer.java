@@ -1,7 +1,10 @@
 package com.mer.project.service;
 
 
+import com.mer.common.redis.val.LoginUser;
+
 import java.util.Set;
+
 /**
  * @Program: zq-web-api
  * @Description: 权限Service
@@ -11,21 +14,24 @@ import java.util.Set;
 public interface SysPermissionsServer {
 
     /**
-     * 根据用户id获取其角色列表
-     * @param userId userId
-     * @return Set<Role>
+     * 获得用户相关信息
+     *
+     * @param phone 手机号
+     * @return
+     */
+    LoginUser getUserAutoAll(String phone);
+
+    /**
+     * 根据用户 id获取其角色权限
+     *
+     * @param userId 角色id
+     * @return Set<String>
      */
     Set<String> getPermissionsSet(Integer userId);
 
     /**
-     * 根据用户id 获取其角色 id 列表
-     * @param userId userId
-     * @return Set<Integer>
-     */
-    Set<Integer> getRoleIdSet(Integer userId);
-
-    /**
      * 根据用户id获取其角色key列表
+     *
      * @param userId userId
      * @return Set<Role>
      */
@@ -33,6 +39,7 @@ public interface SysPermissionsServer {
 
     /**
      * 添加用户角色权限
+     *
      * @param userId
      * @param roleIds
      * @return

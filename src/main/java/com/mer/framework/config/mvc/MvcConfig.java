@@ -22,6 +22,7 @@ public class MvcConfig implements WebMvcConfigurer {
     @Autowired
     private AppConnectBushIntercept appConnectBushIntercept;
 
+
     /**
      * 不拦截的
      */

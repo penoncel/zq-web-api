@@ -31,12 +31,6 @@ public class AppConnectBushIntercept extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-//        log.info("AppConnectBushIntercept" + request.getRequestURI());
-        /**
-         * isAssignableFrom() 判定此 Class 对象所表示的类或接口与指定的 Class 参数所表示的类或接口是否相同，或是否是其超类或超接口
-         * isAssignableFrom() 方法是判断是否为某个类的父类
-         * instanceof 关键字是判断是否某个类的子类
-         */
         if (handler.getClass().isAssignableFrom(HandlerMethod.class)) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Method method = handlerMethod.getMethod();
@@ -48,7 +42,7 @@ public class AppConnectBushIntercept extends HandlerInterceptorAdapter {
             RequestLimit requestLimit = methodAnnotation != null ? methodAnnotation : classAnnotation;
             if (requestLimit != null) {
                 if (isLimit(request, requestLimit)) {
-                    ComUtils.outStr(response, Result.tJson(SysMsgEnum.TOO_MANY_REQUEST));
+                    ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.TOO_MANY_REQUEST));
                     return false;
                 }
             }

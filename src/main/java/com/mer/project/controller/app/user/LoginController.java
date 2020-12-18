@@ -38,6 +38,7 @@ import javax.validation.constraints.NotEmpty;
 @RequestMapping(value = "/app", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequestLimit(maxCount = 5, second = 1)
 public class LoginController {
+
     @Autowired
     ThreadPoolTaskExecutor notifyServiceThreadPool;
     @Autowired
@@ -50,7 +51,8 @@ public class LoginController {
     public Result pwdLogin(@ApiParam(value = "手机号", required = true) @PhoneNumber String phone,
                            @ApiParam(value = "密码(密码+用户名进行MD5加密)", required = true) @NotEmpty(message = "密码不能为空") String password,
                            @ApiParam(value = "版本号", required = true) @RequestParam(value = "versionCode") String versionCode,
-                           @ApiParam(value = "设备类型(1：Android，2：iOS)", required = true) @RequestParam(value = "appType") String appType) {
+                           @ApiParam(value = "设备类型(1：Android，2：iOS)", required = true) @RequestParam(value = "appType") String appType) throws InterruptedException {
+
         return userService.loginByPassword(phone, password);
     }
 

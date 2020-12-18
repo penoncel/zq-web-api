@@ -2,16 +2,48 @@
 server:
   port: 7777
 
-  # 配置是否开启AOP参数加密解密，不配置默认为 true  false
-  isSecret: true
+# 配置是否开启AOP参数加密解密，不配置默认为 true  false
+isSecret: true
 
 #资源文件
 spring:
   profiles:
-    active: develop
-#    active: production
+    # dev 开发，test 测试，prod 生产
+    active: dev
+#    active: test
+#    active: prod
 
-#knife4j:
-#  enable: true
-#  production: true
+
+
+mybatis-plus:
+  # mp.baomidou.com
+  # 在使用 mybatis-plus 时，如果你是简单的增删改查
+  # Mapper 继承该接口后，无需编写 mapper.xml 映射文件，即可获得CRUD功能。
+  # 想写你就写
+  # lombok
+  mapper-locations: classpath:/mybatis-mappers/*/*Dao.xml
+  typeAliasesPackage: com.mer.pojo
+  global-config:
+    #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+    id-type: 0
+    #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+    field-strategy: 2
+    #驼峰下划线转换
+    db-column-underline: true
+    #mp2.3+ 全局表前缀 t_
+    #    table-prefix: t_
+    #刷新mapper 调试神器
+    refresh-mapper: true
+    #逻辑删除配置（下面3个配置）
+    logic-delete-value: 1
+    logic-not-delete-value: 0
+    #sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+    #配置返回数据库(column下划线命名&&返回java实体是驼峰命名)，自动匹配无需as（没开启这个，SQL需要写as： select user_id as userId）
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+
+
+# LOGGING
+logging:
+  config: classpath:log/logback-spring.xml
 

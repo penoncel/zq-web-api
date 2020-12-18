@@ -15,7 +15,7 @@ public class CustomizedToken extends UsernamePasswordToken {
      */
     private String loginType;
 
-    public CustomizedToken(final String username, final String password, String loginType){
+    public CustomizedToken(final String username, final String password, String loginType) {
         super(username, password);
         this.loginType = loginType;
     }

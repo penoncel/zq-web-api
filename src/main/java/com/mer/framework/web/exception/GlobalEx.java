@@ -38,29 +38,7 @@ public class GlobalEx {
     }
 
 
-    /**
-     * 参数校验异常
-     *
-     * @param e e
-     * @return Result
-     */
-    @ResponseBody
-    @ExceptionHandler(ConstraintViolationException.class)
-    public Result handleConstraintViolationException(ConstraintViolationException e) {
-        return Result.error(SysMsgEnum.ERROR.getCode(), e.getMessage());
-    }
 
-
-    /**
-     * 阿里短信发送异常
-     *
-     * @return Result
-     */
-    @ResponseBody
-    @ExceptionHandler(ClientException.class)
-    public Result handleClientException() {
-        return Result.error(SysMsgEnum.SEND_SMS_ERROR.getCode(), SysMsgEnum.SEND_SMS_ERROR.getMsg());
-    }
 
 
     /**
@@ -93,8 +71,22 @@ public class GlobalEx {
      */
     @ResponseBody
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public Result handleMissingParameterException() {
-        return Result.error(SysMsgEnum.MISSING_PARAMETER.getCode(), SysMsgEnum.MISSING_PARAMETER.getMsg());
+    public Result handleMissingParameterException(MissingServletRequestParameterException e) {
+        log.error("参数校验异常:"+e.getMessage());
+        return Result.error(SysMsgEnum.MISSING_PARAMETER.getCode(), "参数缺少,"+SysMsgEnum.MISSING_PARAMETER.getMsg());
+    }
+
+
+    /**
+     * 参数校验异常
+     *
+     * @param e e
+     * @return Result
+     */
+    @ResponseBody
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Result handleConstraintViolationException(ConstraintViolationException e) {
+        return Result.error(SysMsgEnum.ERROR.getCode(), "参数校验错误："+e.getMessage());
     }
 
 
@@ -106,7 +98,7 @@ public class GlobalEx {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public Result exception(Exception e) {
-        log.error(e.getMessage());
+        log.error("异常信息"+e.getMessage());
         return Result.error(SysMsgEnum.INTERNAL_SERVER_ERROR.getCode(), SysMsgEnum.INTERNAL_SERVER_ERROR.getMsg());
     }
 

@@ -44,8 +44,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         if (Objects.nonNull(request.getHeader(Constant.TOKEN_HEADER_NAME))) {
             return executeLogin(request, response);
         } else {
-            log.warn("Current request Header : {}  is null ,Uri：[{}]  , method type：[{}]", Constant.TOKEN_HEADER_NAME, request.getRequestURI(), request.getMethod());
-            ComUtils.outStr(response, Result.tJson(SysMsgEnum.NOT_AUTH));
+            log.warn("request Header {} is null ,Uri：[{}] , method type：[{}]", Constant.TOKEN_HEADER_NAME, request.getRequestURI(), request.getMethod());
+            ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.NOT_AUTH));
             return false;
         }
     }
@@ -81,16 +81,17 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
              */
             if (Objects.nonNull(redisToken)) {
                 if (!jwtToken.getPrincipal().equals(redisToken.getToken())) {
+                    subject.logout();
                     // Todo 这里提示 可以带上 是几点 在哪个设备上登入了（信息来源于token）
-                    ComUtils.outStr(response, Result.tJson(SysMsgEnum.THE_ONLY_ACCESS));
+                    ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.THE_ONLY_ACCESS));
                     return false;
                 }
             }
         } catch (AuthenticationException e) {
-            ComUtils.outStr(response, e.getMessage());
+            ComUtils.outStr(request, response, e.getMessage());
             return false;
         } catch (Exception e) {
-            ComUtils.outStr(response, Result.tJson(SysMsgEnum.INTERNAL_SERVER_ERROR));
+            ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.INTERNAL_SERVER_ERROR));
             return false;
         }
         return true;
