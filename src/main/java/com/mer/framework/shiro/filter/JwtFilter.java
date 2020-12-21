@@ -44,8 +44,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         if (Objects.nonNull(request.getHeader(Constant.TOKEN_HEADER_NAME))) {
             return executeLogin(request, response);
         } else {
-            log.warn("request Header {} is null ,Uri：[{}] , method type：[{}]", Constant.TOKEN_HEADER_NAME, request.getRequestURI(), request.getMethod());
-            ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.NOT_AUTH));
+            ComUtils.outStr(request,response,Result.tJson(SysMsgEnum.NOT_AUTH),"Request Header "+Constant.TOKEN_HEADER_NAME+" is null ");
             return false;
         }
     }
@@ -83,15 +82,15 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 if (!jwtToken.getPrincipal().equals(redisToken.getToken())) {
                     subject.logout();
                     // Todo 这里提示 可以带上 是几点 在哪个设备上登入了（信息来源于token）
-                    ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.THE_ONLY_ACCESS));
+                    ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.THE_ONLY_ACCESS),"登入限制 ");
                     return false;
                 }
             }
         } catch (AuthenticationException e) {
-            ComUtils.outStr(request, response, e.getMessage());
+            ComUtils.outStr(request, response, e.getMessage(),Constant.TOKEN_HEADER_NAME+" 认证失败 ");
             return false;
         } catch (Exception e) {
-            ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.INTERNAL_SERVER_ERROR));
+            ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.INTERNAL_SERVER_ERROR),Constant.TOKEN_HEADER_NAME+" 认证时异常 ");
             return false;
         }
         return true;

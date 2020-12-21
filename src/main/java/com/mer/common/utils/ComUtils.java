@@ -1,6 +1,7 @@
 package com.mer.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -82,13 +83,14 @@ public class ComUtils {
      * @param string   待渲染的字符串
      * @return null
      */
-    public static String outStr(HttpServletRequest request, HttpServletResponse response, String string) {
+    public static String outStr(HttpServletRequest request, HttpServletResponse response, String string, String type) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
         try {
             PrintWriter writer = response.getWriter();
             writer.print(string);
-            log.warn("ip:[{}] - url:[{}] - msg:[{}]", ComUtils.getIpAddr(request), request.getRequestURI(), string);
+            Object user = SecurityUtils.getSubject().getPrincipal();
+            log.warn("type:[{}] - phone:[{}] - ip:[{}] - url:[{}] - msg:[{}]", type, user != null ? user : "尚未登入", ComUtils.getIpAddr(request), request.getRequestURI(), string);
         } catch (IOException e) {
             e.printStackTrace();
         }

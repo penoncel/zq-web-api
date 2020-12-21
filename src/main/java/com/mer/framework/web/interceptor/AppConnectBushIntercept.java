@@ -42,7 +42,7 @@ public class AppConnectBushIntercept extends HandlerInterceptorAdapter {
             RequestLimit requestLimit = methodAnnotation != null ? methodAnnotation : classAnnotation;
             if (requestLimit != null) {
                 if (isLimit(request, requestLimit)) {
-                    ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.TOO_MANY_REQUEST));
+                    ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.TOO_MANY_REQUEST), "Api防刷");
                     return false;
                 }
             }

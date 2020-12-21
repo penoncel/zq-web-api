@@ -2,8 +2,10 @@ package com.mer.framework.web.exception;
 
 
 import com.mer.common.enums.SysMsgEnum;
+import com.mer.common.utils.ComUtils;
 import com.mer.framework.web.domain.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -23,6 +25,8 @@ import javax.validation.ConstraintViolationException;
 @RestControllerAdvice
 @Slf4j
 public class GlobalEx {
+    private static String WARN = "WARN";
+    private static String ERROR = "ERROR";
 
     /**
      * serviceException 内部自定义异常
@@ -33,11 +37,9 @@ public class GlobalEx {
     @ResponseBody
     @ExceptionHandler(ServiceEx.class)
     public Result handleServiceException(ServiceEx e) {
+        logMsg("自定义异常", WARN, e.getMessage());
         return Result.error(e.getCode(), e.getMessage());
     }
-
-
-
 
 
     /**
@@ -48,7 +50,7 @@ public class GlobalEx {
     @ResponseBody
     @ExceptionHandler(AuthorizationException.class)
     public Result handleShiroException(AuthorizationException e) {
-        log.warn("权限不足："+Result.tJson(SysMsgEnum.NOT_AUTH));
+        logMsg("权限不足", WARN, Result.tJson(SysMsgEnum.NOT_AUTH));
         return Result.error(SysMsgEnum.NOT_AUTH.getCode(), SysMsgEnum.NOT_AUTH.getMsg());
     }
 
@@ -59,20 +61,25 @@ public class GlobalEx {
     @ResponseBody
     @ExceptionHandler(IncorrectCredentialsException.class)
     public Result handleTokenException(IncorrectCredentialsException e) {
+        logMsg("token已过期", WARN, e.getMessage());
         return Result.error(SysMsgEnum.TOKEN_INVALID.getCode(), SysMsgEnum.TOKEN_INVALID.getMsg());
     }
 
 
     /**
-     * 参数校验(缺少)异常处理
+     * 参数缺失
      *
      * @return Result
      */
     @ResponseBody
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public Result handleMissingParameterException(MissingServletRequestParameterException e) {
-        log.error("参数校验异常:"+e.getMessage());
-        return Result.error(SysMsgEnum.MISSING_PARAMETER.getCode(), "参数缺少,"+SysMsgEnum.MISSING_PARAMETER.getMsg());
+        logMsg("参数缺失", WARN,
+                String.format(
+                        "参数:[{%s}],类型:[{%s}],描述:[{%s}]", e.getParameterName(), e.getParameterType(), e.getMessage()
+                )
+        );
+        return Result.error(SysMsgEnum.MISSING_PARAMETER.getCode(), SysMsgEnum.MISSING_PARAMETER.getMsg() + "[" + e.getParameterName() + "]");
     }
 
 
@@ -85,7 +92,8 @@ public class GlobalEx {
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
     public Result handleConstraintViolationException(ConstraintViolationException e) {
-        return Result.error(SysMsgEnum.ERROR.getCode(), "参数校验错误："+e.getMessage());
+        logMsg("参数校验错误", WARN, e.getMessage());
+        return Result.error(SysMsgEnum.ERROR.getCode(), "参数校验错误：" + e.getMessage());
     }
 
 
@@ -97,8 +105,23 @@ public class GlobalEx {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public Result exception(Exception e) {
-        log.error("异常信息"+e.getMessage());
+        logMsg("系统异常", ERROR, e.getMessage());
         return Result.error(SysMsgEnum.INTERNAL_SERVER_ERROR.getCode(), SysMsgEnum.INTERNAL_SERVER_ERROR.getMsg());
     }
 
+    /**
+     * 记录日志
+     *
+     * @param exName 异常名
+     * @param type   类型(error warn)
+     * @param msg
+     */
+    private void logMsg(String exName, String type, String msg) {
+        Object user = SecurityUtils.getSubject().getPrincipal();
+        if (WARN.equals(type)) {
+            log.warn(exName + " ==> phone:[{}],uri:[{}],msg:[{}]", user != null ? user : "尚未登入", ComUtils.getRequest().getRequestURI(), msg);
+        } else {
+            log.error(exName + " ==> phone:[{}],uri:[{}],msg:[{}]", user != null ? user : "尚未登入", ComUtils.getRequest().getRequestURI(), msg);
+        }
+    }
 }

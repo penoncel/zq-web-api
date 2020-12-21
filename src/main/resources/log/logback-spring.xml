@@ -128,16 +128,16 @@ scan="false" scanPeriod="60 seconds" debug="false"
     </appender>
 
     <!--连接数据库配置-->
-    <appender name="db_classic_mysql_pool" class="ch.qos.logback.classic.db.DBAppender">
-        <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">
-            <dataSource class="com.alibaba.druid.pool.DruidDataSource">
-                <driverClassName>com.mysql.jdbc.Driver</driverClassName>
-                <url>jdbc:mysql://127.0.0.1:3306/web-db?serverTimezone=Asia/Shanghai</url>
-                <username>root</username>
-                <password>root</password>
-            </dataSource>
-        </connectionSource>
-    </appender>
+<!--    <appender name="db_classic_mysql_pool" class="ch.qos.logback.classic.db.DBAppender">-->
+<!--        <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">-->
+<!--            <dataSource class="com.alibaba.druid.pool.DruidDataSource">-->
+<!--                <driverClassName>com.mysql.jdbc.Driver</driverClassName>-->
+<!--                <url>jdbc:mysql://127.0.0.1:3306/web-db?serverTimezone=Asia/Shanghai</url>-->
+<!--                <username>root</username>-->
+<!--                <password>root</password>-->
+<!--            </dataSource>-->
+<!--        </connectionSource>-->
+<!--    </appender>-->
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
@@ -145,7 +145,7 @@ scan="false" scanPeriod="60 seconds" debug="false"
         <appender-ref ref="INFO_FILE"/>
         <appender-ref ref="WARN_FILE"/>
         <appender-ref ref="ERROR_FILE"/>
-        <appender-ref ref="db_classic_mysql_pool"/>
+<!--        <appender-ref ref="db_classic_mysql_pool"/>-->
     </root>
 
     <!--

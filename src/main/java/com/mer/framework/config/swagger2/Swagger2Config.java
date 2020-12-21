@@ -4,7 +4,6 @@ import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver;
 import com.mer.common.constant.Constant;
 import com.mer.common.enums.SysMsgEnum;
 import com.mer.framework.web.domain.Result;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,8 +23,7 @@ import java.util.List;
 /**
  * @author zhaoqi
  * @date 2020/5/20 17:20
- * http://127.0.0.1:7777/swagger-ui.html#/
- *
+ * <p>
  * http://localhost:7777/doc.html
  * https://xiaoym.gitee.io/knife4j/documentation/
  */
@@ -41,7 +39,7 @@ public class Swagger2Config {
 
     @Bean
     public Docket appApi() {
-        String groupName="1.X版本";
+        String groupName = "1.X版本";
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 // 创建该API的基本信息，展示在文档的页面中（自定义展示的信息）
                 .apiInfo(apiInfo())
@@ -67,7 +65,7 @@ public class Swagger2Config {
 
     @Bean
     public Docket weChat() {
-        String groupName="2.X版本";
+        String groupName = "2.X版本";
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 // 创建该API的基本信息，展示在文档的页面中（自定义展示的信息）
                 .apiInfo(apiInfo())
@@ -86,10 +84,6 @@ public class Swagger2Config {
                 .extensions(openApiExtensionResolver.buildSettingExtensions());
         return docket;
     }
-
-
-
-
 
 
     private ApiInfo apiInfo() {
@@ -154,6 +148,7 @@ public class Swagger2Config {
                         .build());
         return securityContexts;
     }
+
     /**
      * 默认的安全上引用
      */
