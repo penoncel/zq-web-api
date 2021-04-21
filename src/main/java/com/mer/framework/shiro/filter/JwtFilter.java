@@ -93,6 +93,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             ComUtils.outStr(request, response, Result.tJson(SysMsgEnum.INTERNAL_SERVER_ERROR),Constant.TOKEN_HEADER_NAME+" 认证时异常 ");
             return false;
         }
+
         return true;
     }
 

@@ -1,6 +1,7 @@
 package com.mer.project.controller.app.user;
 
 
+import com.alibaba.fastjson.JSON;
 import com.mer.common.redis.key.AppLoginKey;
 import com.mer.framework.annotction.LOG;
 import com.mer.framework.annotction.PhoneNumber;
@@ -17,12 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.Map;
 
 /**
  * @Program: zq-web-api
@@ -43,6 +43,14 @@ public class LoginController {
     ThreadPoolTaskExecutor notifyServiceThreadPool;
     @Autowired
     SysUserService userService;
+
+    @ApiOperation("密码登录")
+    @LOG(operModul = "用户登入", operType = "密码登录", operDesc = "手机号密码登入")
+    @PostMapping("/login/pwdLogin2")
+    public Result pwdLogin(@RequestBody Map<String,String> obj) {
+//        return Result.success(obj);
+        return userService.loginByPassword(obj.get("phone"), obj.get("password"));
+    }
 
 
     @ApiOperation("密码登录")
